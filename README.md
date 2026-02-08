@@ -76,8 +76,6 @@ All actions are timestamped and traceable.
 
 ## 🛠 Technology Stack
 
-## 🛠 Technology Stack
-
 - **Backend**: Python (Flask)
 - **Frontend**: HTML, CSS, Jinja2, JavaScript
 - **Database**: MySQL
@@ -90,8 +88,6 @@ The stack is intentionally simple, readable, and beginner-friendly while remaini
 ---
 
 ## 📂 Project Structure (High Level)
-
-## Project Structure (High Level)
 
 - `app.py` – Application entry point  
 - `routes/` – Flask blueprints and route logic  
