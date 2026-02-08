@@ -1,0 +1,18 @@
+<!-- templates/otp/request_otp.html -->
+{% extends "base.html" %}
+{% block title %}Request OTP{% endblock %}
+
+{% block content %}
+<h2>Request OTP</h2>
+
+<form method="POST" action="{{ url_for('otp_bp.request_otp') }}">
+    <label>Mobile Number:</label>
+    <input type="text" name="mobile" placeholder="Enter your mobile" required><br><br>
+
+    <button type="submit">Send OTP</button>
+</form>
+
+<p>
+    Already have an account? <a href="{{ url_for('otp_bp.verify_otp') }}">Verify OTP</a>
+</p>
+{% endblock %}

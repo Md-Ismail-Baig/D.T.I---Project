@@ -1,0 +1,32 @@
+<!-- templates/otp/signup.html -->
+{% extends "base.html" %}
+{% block title %}Citizen Signup{% endblock %}
+
+{% block content %}
+<h2>Signup</h2>
+
+<form method="POST" action="{{ url_for('auth.signup') }}">
+    <label>Name:</label>
+    <input type="text" name="name" placeholder="Enter your name" required><br><br>
+
+    <label>Mobile:</label>
+    <input type="text" name="mobile" placeholder="Enter mobile number" required><br><br>
+
+    <label>Password:</label>
+    <input type="password" name="password" placeholder="Choose a password" required><br><br>
+
+    <label>
+        Assisted Signup (for elderly/disabled)?
+        <input type="checkbox" name="assisted"> 
+    </label>
+
+    <br><br>
+
+    <button type="submit">Sign Up</button>
+</form>
+
+<p>
+    Already have an account? <a  href="{{ url_for('auth.logout') }}">Login</a>
+</p>
+<p>After signup, you will receive an OTP to verify your mobile.</p>
+{% endblock %}

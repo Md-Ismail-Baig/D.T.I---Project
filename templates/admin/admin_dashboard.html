@@ -1,0 +1,16 @@
+<!-- templates/admin/admin_dashboard.html -->
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<h1>{{ role|capitalize }} Dashboard</h1>
+
+<div style="margin-bottom: 15px;">
+    {% if role in ['super_admin', 'state_admin', 'municipal_admin'] %}
+        <a href="{{ url_for('admin.view_users') }}" class="btn">View Users</a>
+    {% endif %}
+        <a href="{{ url_for('dashboard.issues_dashboard') }}" class="btn">View Issues Dashboard</a>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,21 @@
+<!-- templates/otp/verify_otp.html -->
+{% extends "base.html" %}
+{% block title %}Verify OTP{% endblock %}
+
+{% block content %}
+<h2>Verify OTP</h2>
+
+<p>OTP sent to: <strong>{{ mobile }}</strong> (Valid for 5 minutes)</p>
+
+<form method="POST" action="{{ url_for('otp_bp.verify_otp') }}">
+    <label>Enter OTP:</label>
+    <input type="text" name="otp" placeholder="6-digit OTP" required><br><br>
+
+    <button type="submit">Verify OTP</button>
+</form>
+
+<p>
+    Didn't receive OTP? 
+    <a href="{{ url_for('otp_bp.request_otp') }}">Request again</a>
+</p>
+{% endblock %}

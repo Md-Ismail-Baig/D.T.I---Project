@@ -1,0 +1,29 @@
+<!-- templates/issue_assign.html -->
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Assign Issue</h2>
+
+<p><strong>Issue:</strong> {{ issue.title }}</p>
+
+<form method="POST">
+
+    <label>Assign Department</label><br>
+    <select name="department_id" required>
+        {% for dept in departments %}
+            <option value="{{ dept.department_id }}">
+                {{ dept.name }}
+            </option>
+        {% endfor %}
+    </select><br><br>
+
+    <label>Deadline</label><br>
+    <input type="datetime-local" name="deadline" required><br><br>
+
+    <label>Remarks</label><br>
+    <textarea name="remarks" required></textarea><br><br>
+
+    <button type="submit">Assign Issue</button>
+</form>
+
+{% endblock %}

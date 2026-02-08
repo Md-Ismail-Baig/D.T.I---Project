@@ -1,0 +1,93 @@
+<!-- templates/profile/update_profile.html -->
+{% extends "base.html" %}
+{% block title %}Update Profile{% endblock %}
+
+{% block content %}
+<h1>Update Profile</h1>
+
+<form method="POST">
+    <label>Name:</label>
+    <input type="text" name="name" value="{{ user.name }}" required><br><br>
+
+    <label>Email:</label>
+    <input type="email" name="email" value="{{ user.email }}"><br><br>
+
+    <label>Mobile:</label>
+    <input type="text" name="mobile" value="{{ user.mobile }}" required><br><br>
+
+    <!-- STATE -->
+    <label>State:</label>
+    <select id="state_select" name="state_id">
+        <option value="">Select State</option>
+        {% for s in states %}
+            <option value="{{ s.state_id }}" {% if s.state_id == user.state_id %}selected{% endif %}>
+                {{ s.name }}
+            </option>
+        {% endfor %}
+    </select><br><br>
+
+    <!-- CITY -->
+    <label>City:</label>
+    <select id="city_select" name="city_id">
+        <option value="">Select City</option>
+        {% for c in cities %}
+            {% if c.city_id == user.city_id %}
+            <option value="{{ c.city_id }}" selected>{{ c.name }}</option>
+            {% endif %}
+        {% endfor %}
+    </select><br><br>
+
+    <!-- WARD -->
+    <label>Ward:</label>
+    <select id="ward_select" name="ward_id">
+        <option value="">Select Ward</option>
+        {% for w in wards %}
+            {% if w.ward_id == user.ward_id %}
+            <option value="{{ w.ward_id }}" selected>{{ w.name }}</option>
+            {% endif %}
+        {% endfor %}
+    </select><br><br>
+
+    <button type="submit">Update</button>
+</form>
+
+<a href="{{ url_for('profile.profile_page') }}">Back to Profile</a>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const state = document.getElementById("state_select");
+    const city = document.getElementById("city_select");
+    const ward = document.getElementById("ward_select");
+
+    // STATE → CITY
+    state.addEventListener("change", () => {
+        city.innerHTML = "<option value=''>Select City</option>";
+        ward.innerHTML = "<option value=''>Select Ward</option>";
+
+        if (!state.value) return;
+
+        fetch(`/admin/get_cities?state_id=${state.value}`)
+            .then(res => res.json())
+            .then(data => {
+                data.cities.forEach(c => {
+                    city.innerHTML += `<option value="${c.city_id}">${c.name}</option>`;
+                });
+            });
+    });
+
+    // CITY → WARD
+    city.addEventListener("change", () => {
+        ward.innerHTML = "<option value=''>Select Ward</option>";
+        if (!city.value) return;
+
+        fetch(`/admin/get_wards?city_id=${city.value}`)
+            .then(res => res.json())
+            .then(data => {
+                data.wards.forEach(w => {
+                    ward.innerHTML += `<option value="${w.ward_id}">${w.name}</option>`;
+                });
+            });
+    });
+});
+</script>
+{% endblock %}

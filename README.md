@@ -92,5 +92,6 @@ The stack is intentionally simple, readable, and beginner-friendly while remaini
 - `app.py` – Application entry point  
 - `routes/` – Flask blueprints and route logic  
 - `utils/` – Authentication and helper utilities  
-- `templates/` – HTML templates  
-- `static/` – CSS, JS, and uploaded files  
+- `templates/` – HTML templates (Jinja2)  
+- `static/` – CSS, JavaScript, and uploaded files  
+ 

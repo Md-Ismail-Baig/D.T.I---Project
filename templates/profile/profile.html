@@ -1,0 +1,51 @@
+<!-- templates/profile/profile.html -->
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<h2>My Profile</h2>
+
+<!-- ================= PROFILE TABLE ================= -->
+<table class="profile-table" border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse; width:60%; margin-bottom:20px;">
+    <tr>
+        <th>Name</th>
+        <td>{{ user.name }}</td>
+    </tr>
+    <tr>
+        <th>Mobile</th>
+        <td>{{ user.mobile }}</td>
+    </tr>
+    <tr>
+        <th>Role</th>
+        <td>{{ user.role }}</td>
+    </tr>
+    <tr>
+        <th>Verified</th>
+        <td>{% if user.verified %}✅ Verified{% else %}❌ Not Verified{% endif %}</td>
+    </tr>
+    <tr>
+        <th>State</th>
+        <td>{{ user.state_name or '-' }}</td>
+    </tr>
+    <tr>
+        <th>City</th>
+        <td>{{ user.city_name or '-' }}</td>
+    </tr>
+    <tr>
+        <th>Ward</th>
+        <td>{{ user.ward_name or '-' }}</td>
+    </tr>
+    <tr>
+        <th>Account Created</th>
+        <td>{{ user.created_at }}</td>
+    </tr>
+</table>
+
+<!-- ================= ACTION BUTTONS ================= -->
+<div style="display:flex; gap:10px;">
+    <a href="{{ url_for('profile.update_profile') }}" class="btn">✏️ Edit Profile</a>
+    <a href="{{ url_for('otp_bp.change_password') }}" class="btn">🔒 Change Password</a>
+    <a href="{{ url_for('dashboard.dashboard') }}" class="btn">🏠 Back to Dashboard</a>
+</div>
+
+{% endblock %}

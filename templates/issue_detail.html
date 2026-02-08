@@ -1,0 +1,260 @@
+<!-- templates/issue_detail.html -->
+{% extends "base.html" %}
+{% block title %}Issue Details{% endblock %}
+
+{% block content %}
+
+<h2>{{ issue.title }}</h2>
+<hr>
+
+<!-- ================= META ================= -->
+<div class="issue-meta">
+    <p><strong>Status:</strong> {{ issue.current_status }}</p>
+    <p><strong>Category:</strong> {{ issue.category }}</p>
+    <p><strong>Deadline:</strong>
+        {{ issue.deadline.strftime('%d %b %Y, %H:%M') if issue.deadline else '-' }}
+    </p>
+</div>
+
+<hr>
+
+<!-- ================= DESCRIPTION ================= -->
+<h3>Description</h3>
+<p>{{ issue.description }}</p>
+
+<hr>
+
+<!-- ================= LOCATION ================= -->
+<h3>Location</h3>
+<p>
+    {{ issue.state_name or '-' }} →
+    {{ issue.city_name or '-' }} →
+    {{ issue.ward_name or '-' }}
+</p>
+
+<hr>
+
+<!-- ================= IMAGES ================= -->
+<h3>Images</h3>
+
+{% if images %}
+<div class="image-grid">
+    {% for img in images %}
+        <div class="image-card">
+            <img src="/{{ img.file_path }}"
+                 class="issue-thumb"
+                 onclick="openImage(this.src)"
+                 alt="Issue Image">
+
+            <a href="/{{ img.file_path }}"
+               download
+               class="download-btn">
+                ⬇ Download
+            </a>
+        </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>No images uploaded.</p>
+{% endif %}
+
+<hr>
+
+<!-- ================= TIMELINE ================= -->
+<h3>Status Timeline</h3>
+{% if timeline %}
+<ul>
+    {% for t in timeline %}
+    <li style="margin-bottom:12px;">
+        <strong>{{ t.status }}</strong> – {{ t.remarks }}<br>
+        <small>{{ t.name }} | {{ t.updated_at }}</small>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No status updates yet.</p>
+{% endif %}
+
+<hr>
+
+<!-- ================= ADMIN ACTIONS ================= -->
+{% if session.role == 'municipal_admin' and not issue.assigned_department %}
+<a href="{{ url_for('issues.assign_issue', issue_id=issue.issue_id) }}"
+   class="btn">
+    Assign Issue
+</a>
+<br><br>
+{% endif %}
+
+{% if session.role in ['department_admin', 'field_staff', 'municipal_admin'] %}
+<h3>Update Status</h3>
+
+<form method="POST"
+      action="{{ url_for('issues.update_issue_status', issue_id=issue.issue_id) }}">
+
+    <label>Status</label><br>
+    <select name="status" required>
+        {% for s in ['In Progress', 'In Review', 'Resolved'] %}
+        <option value="{{ s }}" {% if issue.current_status == s %}selected{% endif %}>
+            {{ s }}
+        </option>
+        {% endfor %}
+
+        {% if session.role == 'municipal_admin' %}
+        <option value="Rejected"
+            {% if issue.current_status == 'Rejected' %}selected{% endif %}>
+            Rejected
+        </option>
+        {% endif %}
+    </select><br><br>
+
+    <label>Remarks</label><br>
+    <textarea name="remarks" required></textarea><br><br>
+
+    <button type="submit" class="btn">Update Status</button>
+</form>
+{% endif %}
+
+<br>
+
+<a href="{{ url_for('dashboard.dashboard') }}" class="btn">
+    ⬅ Back to Dashboard
+</a>
+
+<!-- ================= IMAGE MODAL ================= -->
+<div id="imageModal" class="image-modal">
+    <span class="close-btn" onclick="closeImage()">✖</span>
+    <img id="modalImage" alt="Full Image">
+</div>
+
+<!-- ================= STYLES ================= -->
+<style>
+.image-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.image-card {
+    text-align: center;
+}
+
+.issue-thumb {
+    width: 200px;
+    border: 1px solid #ccc;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.download-btn {
+    display: block;
+    margin-top: 6px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.image-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}
+
+.image-modal img {
+    max-width: 90%;
+    max-height: 90%;
+    cursor: grab;
+    transition: transform 0.05s ease-out;
+}
+
+
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 28px;
+    color: white;
+    cursor: pointer;
+}
+</style>
+
+<!-- ================= SCRIPT ================= -->
+<script>
+let scale = 1;
+let originX = 0;
+let originY = 0;
+let isDragging = false;
+let startX, startY;
+
+const modal = document.getElementById("imageModal");
+const modalImg = document.getElementById("modalImage");
+
+function openImage(src) {
+    modalImg.src = src;
+    scale = 1;
+    originX = 0;
+    originY = 0;
+    applyTransform();
+    modal.style.display = "flex";
+}
+
+function closeImage() {
+    modal.style.display = "none";
+}
+
+function applyTransform() {
+    modalImg.style.transform =
+        `translate(${originX}px, ${originY}px) scale(${scale})`;
+}
+
+/* -------- ZOOM WITH MOUSE WHEEL -------- */
+modalImg.addEventListener("wheel", (e) => {
+    e.preventDefault();
+
+    const delta = e.deltaY < 0 ? 0.2 : -0.2;
+    scale = Math.min(Math.max(1, scale + delta), 5);
+    applyTransform();
+});
+
+/* -------- DRAG TO PAN -------- */
+modalImg.addEventListener("mousedown", (e) => {
+    if (scale <= 1) return;
+
+    isDragging = true;
+    startX = e.clientX - originX;
+    startY = e.clientY - originY;
+    modalImg.style.cursor = "grabbing";
+});
+
+window.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+
+    originX = e.clientX - startX;
+    originY = e.clientY - startY;
+    applyTransform();
+});
+
+window.addEventListener("mouseup", () => {
+    isDragging = false;
+    modalImg.style.cursor = "grab";
+});
+
+/* -------- DOUBLE CLICK RESET -------- */
+modalImg.addEventListener("dblclick", () => {
+    scale = 1;
+    originX = 0;
+    originY = 0;
+    applyTransform();
+});
+
+/* -------- ESC CLOSE -------- */
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeImage();
+});
+</script>
+
+
+{% endblock %}

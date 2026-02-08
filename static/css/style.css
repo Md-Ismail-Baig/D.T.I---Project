@@ -1,0 +1,312 @@
+/* static/style/style.css */
+/* ==============================
+   GLOBAL RESET & BASE
+   ============================== */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #f4f6f8;
+    color: #1f2937;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 30px;
+}
+
+/* ==============================
+   HEADER & NAV
+   ============================== */
+header {
+    background-color: #1f2937;
+    color: white;
+    padding: 15px 30px;
+}
+
+header h1 {
+    margin: 0;
+    display: inline-block;
+    font-size: 1.6rem;
+}
+
+header .logo {
+    color: white;
+    text-decoration: none;
+}
+
+nav {
+    float: right;
+    margin-top: 8px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: bold;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* ==============================
+   FOOTER
+   ============================== */
+footer {
+    text-align: center;
+    padding: 15px;
+    background: #e5e7eb;
+    margin-top: 40px;
+    font-size: 0.9em;
+    color: #1f2937;
+}
+
+/* ==============================
+   BUTTONS
+   ============================== */
+.btn {
+    display: inline-block;
+    padding: 10px 18px;
+    background-color: #2563eb;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #1d4ed8;
+}
+
+.btn-danger {
+    background-color: #dc2626;
+}
+
+.btn-danger:hover {
+    background-color: #b91c1c;
+}
+
+/* ==============================
+   TABLES
+   ============================== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    margin-top: 20px;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+table th,
+table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+}
+
+table th {
+    background-color: #2563eb;
+    color: white;
+    font-size: 0.9rem;
+}
+
+/* ==============================
+   FORMS
+   ============================== */
+form {
+    max-width: 650px;
+    background: white;
+    padding: 25px;
+    border-radius: 6px;
+    margin-top: 20px;
+    border: 1px solid #e5e7eb;
+}
+
+label {
+    font-weight: bold;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    margin-top: 8px;
+    margin-bottom: 15px;
+    padding: 9px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+
+textarea {
+    min-height: 90px;
+}
+
+/* ==============================
+   FLASH MESSAGES
+   ============================== */
+.flash-messages {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+}
+
+.flash-messages li {
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.flash-messages li.success {
+    background-color: #bbf7d0;
+    color: #065f46;
+}
+
+.flash-messages li.warning {
+    background-color: #fef3c7;
+    color: #78350f;
+}
+
+.flash-messages li.danger {
+    background-color: #fecaca;
+    color: #991b1b;
+}
+
+/* ==============================
+   ISSUE DETAILS PAGE
+   ============================== */
+.issue-meta p {
+    margin: 6px 0;
+    font-size: 0.95rem;
+}
+
+.issue-meta strong {
+    color: #111827;
+}
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.status-reported {
+    background: #fde68a;
+    color: #78350f;
+}
+
+.status-in-progress {
+    background: #bfdbfe;
+    color: #1e3a8a;
+}
+
+.status-resolved {
+    background: #bbf7d0;
+    color: #065f46;
+}
+
+.status-rejected {
+    background: #fecaca;
+    color: #991b1b;
+}
+
+/* ==============================
+   IMAGE GALLERY
+   ============================== */
+.issue-images img {
+    border: 1px solid #d1d5db;
+    padding: 4px;
+    border-radius: 4px;
+    transition: transform 0.2s ease;
+}
+
+.issue-images img:hover {
+    transform: scale(1.03);
+}
+
+/* ==============================
+   TIMELINE
+   ============================== */
+ul {
+    padding-left: 18px;
+}
+
+ul li {
+    margin-bottom: 12px;
+    padding-left: 10px;
+    border-left: 3px solid #2563eb;
+}
+
+/* ==============================
+   ERROR PAGES
+   ============================== */
+.error-box {
+    text-align: center;
+    margin-top: 80px;
+}
+
+.error-box h1 {
+    font-size: 72px;
+    color: #dc2626;
+}
+
+/* ==============================
+   OTP / AUTH FORMS
+   ============================== */
+.otp-form {
+    max-width: 420px;
+    margin: 40px auto;
+    padding: 25px;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0px 0px 8px rgba(0,0,0,0.1);
+}
+
+.otp-form button {
+    width: 100%;
+    padding: 10px;
+    font-weight: bold;
+}
+
+/* ==============================
+   DASHBOARD LINKS
+   ============================== */
+.dashboard-links a {
+    display: inline-block;
+    margin-right: 12px;
+    margin-bottom: 12px;
+}
+
+/* ==============================
+   RESPONSIVE
+   ============================== */
+@media (max-width: 768px) {
+    nav {
+        float: none;
+        text-align: center;
+        margin-top: 12px;
+    }
+
+    header h1 {
+        display: block;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .container {
+        padding: 15px;
+    }
+}

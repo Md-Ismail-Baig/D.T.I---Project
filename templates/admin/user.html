@@ -1,0 +1,184 @@
+<!-- templates/admin/user.html -->
+{% extends "base.html" %}
+{% block title %}Users List{% endblock %}
+
+{% block content %}
+<h1>Users</h1>
+
+<a href="{{ url_for('admin.create_user') }}" class="btn">➕ Create New User</a>
+<a href="{{ url_for('admin.admin_dashboard') }}" class="btn">Back to Dashboard</a>
+
+<!-- FILTERS -->
+<!-- FILTERS -->
+<div style="margin:20px 0; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+
+    <select id="state_filter">
+        <option value="">-- Select State --</option>
+        {% for state in states %}
+            <option value="{{ state.state_id }}">{{ state.name }}</option>
+        {% endfor %}
+    </select>
+
+    <select id="city_filter">
+        <option value="">-- Select City --</option>
+    </select>
+
+    <select id="ward_filter">
+        <option value="">-- Select Ward --</option>
+    </select>
+
+    <input type="text" id="search_input" placeholder="Search name / mobile">
+
+    <button id="reset_filters">View All Users</button>
+</div>
+
+
+<table border="1" class="profile-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Mobile</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>State</th>
+            <th>City</th>
+            <th>Ward</th>
+            <th>Verified</th>
+            <th>Assisted Signup</th>
+            <th>Created At</th>
+        </tr>
+    </thead>
+    <tbody id="users_table">
+        {% for user in users %}
+        <tr>
+            <td>{{ user.user_id }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.mobile }}</td>
+            <td>{{ user.email or '-' }}</td>
+            <td>{{ user.role }}</td>
+            <td>{{ user.state_name or '-' }}</td>
+            <td>{{ user.city_name or '-' }}</td>
+            <td>{{ user.ward_name or '-' }}</td>
+            <td>{% if user.verified %}✅{% else %}❌{% endif %}</td>
+            <td>{% if user.assisted_signup %}✅ Assisted{% else %}❌{% endif %}</td>
+            <td>{{ user.created_at }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const state = document.getElementById("state_filter");
+    const city = document.getElementById("city_filter");
+    const ward = document.getElementById("ward_filter");
+    const search = document.getElementById("search_input");
+    const table = document.getElementById("users_table");
+    const resetBtn = document.getElementById("reset_filters");
+    // -----------------------
+    // CORE FILTER FUNCTION
+    // -----------------------
+    function applyFilters() {
+        const params = new URLSearchParams({
+            state_id: state.value,
+            city_id: city.value,
+            ward_id: ward.value,
+            search: search.value.trim()
+        });
+
+        fetch(`/admin/users/filter?${params.toString()}`)
+            .then(res => res.json())
+            .then(data => {
+                table.innerHTML = "";
+
+                if (!data.users.length) {
+                    table.innerHTML =
+                        "<tr><td colspan='11'>No users found.</td></tr>";
+                    return;
+                }
+
+                data.users.forEach(u => {
+                    table.innerHTML += `
+                        <tr>
+                            <td>${u.user_id}</td>
+                            <td>${u.name}</td>
+                            <td>${u.mobile}</td>
+                            <td>${u.email || '-'}</td>
+                            <td>${u.role}</td>
+                            <td>${u.state_name || '-'}</td>
+                            <td>${u.city_name || '-'}</td>
+                            <td>${u.ward_name || '-'}</td>
+                            <td>${u.verified ? '✅' : '❌'}</td>
+                            <td>${u.assisted_signup ? '✅ Assisted' : '❌'}</td>
+                            <td>${u.created_at}</td>
+                        </tr>`;
+                });
+            });
+    }
+
+    // -----------------------
+    // STATE → CITY
+    // -----------------------
+    state.addEventListener("change", () => {
+        city.innerHTML = '<option value="">--Select City--</option>';
+        ward.innerHTML = '<option value="">--Select Ward--</option>';
+
+        if (!state.value) return applyFilters();
+
+        fetch(`/admin/get_cities?state_id=${state.value}`)
+            .then(res => res.json())
+            .then(data => {
+                data.cities.forEach(c =>
+                    city.innerHTML += `<option value="${c.city_id}">${c.name}</option>`
+                );
+                applyFilters();
+            });
+    });
+
+    // -----------------------
+    // CITY → WARD
+    // -----------------------
+    city.addEventListener("change", () => {
+        ward.innerHTML = '<option value="">--Select Ward--</option>';
+
+        if (!city.value) return applyFilters();
+
+        fetch(`/admin/get_wards?city_id=${city.value}`)
+            .then(res => res.json())
+            .then(data => {
+                data.wards.forEach(w =>
+                    ward.innerHTML += `<option value="${w.ward_id}">${w.name}</option>`
+                );
+                applyFilters();
+            });
+    });
+
+    // -----------------------
+    // WARD FILTER
+    // -----------------------
+    ward.addEventListener("change", applyFilters);
+
+    // -----------------------
+    // SEARCH (LIVE)
+    // -----------------------
+    search.addEventListener("input", applyFilters);
+
+    resetBtn.addEventListener("click", () => {
+        state.value = "";
+        city.innerHTML = '<option value="">--Select City--</option>';
+        ward.innerHTML = '<option value="">--Select Ward--</option>';
+        search.value = "";
+
+        applyFilters();   // reload all users
+    });
+
+});
+
+
+
+</script>
+
+
+{% endblock %}
