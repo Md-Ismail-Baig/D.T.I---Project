@@ -95,3 +95,72 @@ The stack is intentionally simple, readable, and beginner-friendly while remaini
 - `templates/` – HTML templates (Jinja2)  
 - `static/` – CSS, JavaScript, and uploaded files  
  
+
+Sensitive configuration files (`config.py`, `.env`) are excluded from version control.
+
+---
+
+## 🚀 Getting Started (Development)
+
+1. Clone the repository
+2. Create a virtual environment
+3. Install dependencies
+4. Create `config.py` using `config.example.py`
+5. Set up the database schema
+6. Run the Flask application
+
+> Detailed setup instructions will be expanded as the project stabilizes.
+
+---
+
+## 🤝 Team Collaboration
+
+This is a **team project**.
+
+- Development happens collaboratively via GitHub
+- Features are added incrementally
+- README and documentation will be updated as the system matures
+- Code reviews and refactoring are expected parts of the workflow
+
+We prioritize **clarity, correctness, and maintainability** over rushed features.
+
+---
+
+## 🔮 Planned Enhancements
+
+- Password hashing and enhanced security controls
+- OTP resend limits and rate limiting
+- Audit logs and activity tracking
+- Notifications (SMS / Email)
+- Advanced analytics and reports
+- Accessibility and usability improvements
+- Performance optimization and pagination
+
+These will be implemented progressively.
+
+---
+
+## 🧭 Philosophy
+
+This project is not just a web application.
+
+It is an attempt to:
+- Respect existing governance structures
+- Include citizens who are offline or non-technical
+- Encourage accountability through visibility
+- Build software that reflects real-world constraints
+
+We are not trying to build something flashy.  
+We are trying to build something **right**.
+
+---
+
+## 📌 Status
+
+🟡 **In Active Development**
+
+The system is functional but evolving.  
+Expect regular changes, improvements, and refinements.
+
+---
+
