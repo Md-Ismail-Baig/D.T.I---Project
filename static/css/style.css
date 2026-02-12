@@ -310,3 +310,275 @@ ul li {
         padding: 15px;
     }
 }
+
+/* ==============================
+   INFO PAGE
+   ============================== */
+.info-page {
+    max-width: 800px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+    line-height: 1.7;
+}
+
+.info-page h2 {
+    color: #1f2937;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.info-page ul, .info-page ol {
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.info-page p {
+    margin-bottom: 15px;
+    color: #374151;
+}
+
+.info-page strong {
+    color: #111827;
+}
+
+.info-page .cta {
+    margin-top: 25px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.info-page .cta a {
+    color: #2563eb;
+    text-decoration: none;
+    margin: 0 8px;
+}
+
+.info-page .cta a:hover {
+    text-decoration: underline;
+}
+
+.voice-assistant-section {
+    margin-top: 30px;
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+}
+
+.voice-assistant {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.voice-assistant button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.voice-assistant button:hover {
+    background-color: #0056b3;
+}
+
+.voice-assistant span {
+    font-weight: bold;
+    color: #333;
+}
+
+/* ======================================
+   INFO PAGE – PROFESSIONAL ENHANCEMENTS
+====================================== */
+
+/* Hero Section */
+.hero-section {
+    text-align: center;
+    padding: 30px 10px 10px;
+}
+
+.hero-section h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.hero-highlight {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2563eb;
+    margin-top: 10px;
+    letter-spacing: 1px;
+}
+
+/* ===============================
+   STATS SECTION
+================================= */
+.stats-section {
+    margin-top: 40px;
+}
+
+.stats-section h3 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+}
+
+.stat-card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+}
+
+.stat-card h4 {
+    margin-bottom: 10px;
+    font-size: 1rem;
+    color: #6b7280;
+}
+
+.stat-card p {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #1f2937;
+}
+
+/* ===============================
+   WORKFLOW SECTION
+================================= */
+.workflow-section {
+    margin-top: 45px;
+    text-align: center;
+}
+
+.workflow-steps {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.workflow-steps div {
+    background: #f3f4f6;
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    font-size: 0.9rem;
+}
+
+/* ===============================
+   FAQ SECTION
+================================= */
+.faq-section {
+    margin-top: 45px;
+}
+
+.faq-section details {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 12px 15px;
+    margin-bottom: 12px;
+    transition: background 0.2s ease;
+}
+
+.faq-section details:hover {
+    background: #f3f4f6;
+}
+
+.faq-section summary {
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.faq-section p {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: #374151;
+}
+
+/* ===============================
+   DISCLAIMER
+================================= */
+.disclaimer-section {
+    margin-top: 45px;
+    padding: 20px;
+    background: #fef3c7;
+    border-left: 5px solid #f59e0b;
+    border-radius: 6px;
+}
+
+.disclaimer-section h3 {
+    margin-top: 0;
+}
+
+/* ===============================
+   VOICE ASSISTANT UPGRADE
+================================= */
+.voice-assistant-section {
+    margin-top: 45px;
+    padding-top: 25px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.voice-assistant {
+    background: #f9fafb;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.voice-assistant button {
+    background-color: #2563eb;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.voice-assistant button:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+.voice-assistant span {
+    display: inline-block;
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+/* ===============================
+   CONTACT SECTION
+================================= */
+.info-page section:last-child {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* ===============================
+   SMOOTH VISUAL IMPROVEMENTS
+================================= */
+.info-page section {
+    margin-bottom: 30px;
+}
+.info-page section h3 {
+    margin-bottom: 15px;
+    color: #1f2937;
+}

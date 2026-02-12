@@ -17,7 +17,7 @@
 
     <label>
         Assisted Signup (for elderly/disabled)?
-        <input type="checkbox" name="assisted"> 
+        <input type="checkbox" name="assisted_signup">
     </label>
 
     <br><br>
@@ -26,7 +26,7 @@
 </form>
 
 <p>
-    Already have an account? <a  href="{{ url_for('auth.logout') }}">Login</a>
+    Already have an account?<a href="{{ url_for('auth.login') }}">Login</a>
 </p>
 <p>After signup, you will receive an OTP to verify your mobile.</p>
 {% endblock %}

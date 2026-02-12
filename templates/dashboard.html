@@ -1,4 +1,3 @@
-<!-- templates/dashboard.html -->
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
 
@@ -8,105 +7,107 @@
 
 <!-- ================= ACTION BAR ================= -->
 <div style="margin-bottom:15px;">
-    {% if role in ['citizen', 'facilitator'] %}
-        <a href="{{ url_for('issues.create_issue') }}" class="btn">
-            ➕ Report Issue
-        </a>
+    {% if role in ['citizen','facilitator'] %}
+        <a href="{{ url_for('issues.create_issue') }}" class="btn">➕ Report Issue</a>
     {% endif %}
 
-    <a href="{{ url_for('dashboard.issues_dashboard') }}"
-       class="btn"
-       style="margin-left:10px;">
+    <a href="{{ url_for('dashboard.issues_dashboard') }}" class="btn" style="margin-left:10px;">
         📋 View All Issues
     </a>
-    <a href="{{ url_for('admin.admin_dashboard') }}" class="btn">
-        Back to Dashboard
-    </a>
+
+    {% if role in ['super_admin','state_admin','municipal_admin'] %}
+        <a href="{{ url_for('admin.admin_dashboard') }}" class="btn">⬅ Back to Dashboard</a>
+    {% endif %}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- ================= ANALYTICS ================= -->
 <div style="margin-bottom:20px;">
-
-    <!-- CARDS -->
     <div style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom:15px;">
         {% for k, v in stats.items() %}
-            <div style="
-                padding:12px 18px;
-                background:#fafafa;
-                border:1px solid #ddd;
-                border-radius:6px;
-                min-width:140px;
-                text-align:center;">
-                <div style="font-size:13px; color:#666;">{{ k }}</div>
-                <div style="font-size:22px; font-weight:bold;">{{ v }}</div>
-            </div>
+        <div style="
+            padding:12px 18px;
+            background:#fafafa;
+            border:1px solid #ddd;
+            border-radius:6px;
+            min-width:140px;
+            text-align:center;">
+            <div style="font-size:13px; color:#666;">{{ k }}</div>
+            <div style="font-size:22px; font-weight:bold;">{{ v }}</div>
+        </div>
         {% endfor %}
     </div>
 
-    <!-- GRAPH -->
     <canvas id="issuesChart" height="90"></canvas>
 </div>
+
+<!-- ================= PROFILE WARNING ================= -->
+{% if not profile_location or not profile_location.state_id or not profile_location.city_id %}
+<div style="
+    background:#fff3cd;
+    border:1px solid #ffeeba;
+    padding:10px;
+    border-radius:6px;
+    margin-bottom:15px;">
+    ⚠️ Your profile location is incomplete,
+    update location in profile to see relevant issues and stats.
+    <a href="{{ url_for('profile.update_profile') }}">Complete profile</a>
+</div>
+{% endif %}
 
 <!-- ================= FILTER BAR ================= -->
 <div style="margin-bottom:15px; display:flex; gap:10px; flex-wrap:wrap;">
 
     {% if role == 'super_admin' %}
-        <select id="state_filter">
-            <option value="">State</option>
-            {% for s in states %}
-                <option value="{{ s.state_id }}">{{ s.name }}</option>
-            {% endfor %}
-        </select>
+    <select id="state_filter">
+        <option value="">State</option>
+        {% for s in states %}
+            <option value="{{ s.state_id }}">{{ s.name }}</option>
+        {% endfor %}
+    </select>
     {% endif %}
 
-    {% if role in ['super_admin', 'state_admin'] %}
-        <select id="city_filter">
-            <option value="">City</option>
-        </select>
+    {% if role in ['super_admin','state_admin'] %}
+    <select id="city_filter">
+        <option value="">City</option>
+    </select>
     {% endif %}
 
-    {% if role in ['super_admin', 'state_admin', 'municipal_admin'] %}
-        <select id="ward_filter">
-            <option value="">Ward</option>
-        </select>
+    {% if role in ['super_admin','state_admin','municipal_admin'] %}
+    <select id="ward_filter">
+        <option value="">Ward</option>
+    </select>
     {% endif %}
 
-    {% if role in ['super_admin', 'state_admin', 'municipal_admin', 'department_admin'] %}
-        <select id="department_filter">
-            <option value="">Department</option>
-        </select>
+    {% if role in ['super_admin','state_admin','municipal_admin','department_admin'] %}
+    <select id="department_filter">
+        <option value="">Department</option>
+    </select>
     {% endif %}
 
-    <!-- STATUS (CRITICAL FOR FIELD STAFF) -->
     <select id="status_filter">
         <option value="">Status</option>
-
-        {% if role in ['super_admin', 'state_admin', 'municipal_admin'] %}
-            <option value="Reported">Reported</option>
-            <option value="Assigned">Assigned</option>
-            <option value="In Progress">In Progress</option>
-            <option value="In Review">In Review</option>
-            <option value="Resolved">Resolved</option>
-            <option value="Rejected">Rejected</option>
-
+        {% if role in ['super_admin','state_admin','municipal_admin'] %}
+            <option>Reported</option>
+            <option>Assigned</option>
+            <option>In Progress</option>
+            <option>In Review</option>
+            <option>Resolved</option>
+            <option>Rejected</option>
         {% elif role == 'field_staff' %}
-            <option value="Assigned">Assigned</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Resolved">Resolved</option>
-
+            <option>Assigned</option>
+            <option>In Progress</option>
+            <option>Resolved</option>
         {% else %}
-            <option value="Reported">Reported</option>
-            <option value="In Review">In Review</option>
-            <option value="Resolved">Resolved</option>
+            <option>Reported</option>
+            <option>In Review</option>
+            <option>Resolved</option>
         {% endif %}
     </select>
 
-
-    <input type="text"
-           id="search_input"
-           placeholder="Search by issue title or ID"
+    <input type="text" id="search_input"
+           placeholder="Search by title or ID"
            style="min-width:220px;">
 </div>
 
@@ -127,139 +128,164 @@
     </thead>
 
     <tbody id="issues_table">
-        {% for issue in issues %}
-        <tr>
-            <td>{{ issue.title }}</td>
-            <td>{{ issue.status }}</td>
-            <td>{{ issue.ward_name or '-' }}</td>
-            <td>{{ issue.city_name or '-' }}</td>
-            <td>{{ issue.state_name or '-' }}</td>
-            <td>{{ issue.deadline or '-' }}</td>
-            <td>
-                <a href="{{ url_for('issues.issue_detail', issue_id=issue.issue_id) }}">
-                    View
-                </a>
-            </td>
-        </tr>
+        {% if issues %}
+            {% for issue in issues %}
+            <tr>
+                <td>{{ issue.title }}</td>
+                <td>{{ issue.status }}</td>
+                <td>{{ issue.ward_name or '-' }}</td>
+                <td>{{ issue.city_name or '-' }}</td>
+                <td>{{ issue.state_name or '-' }}</td>
+                <td>{{ issue.deadline or '-' }}</td>
+                <td>
+                    <a href="{{ url_for('issues.issue_detail', issue_id=issue.issue_id) }}">View</a>
+                </td>
+            </tr>
+            {% endfor %}
         {% else %}
         <tr>
             <td colspan="7">No issues found.</td>
         </tr>
-        {% endfor %}
+        {% endif %}
     </tbody>
 </table>
+
+<!-- ================= PROFILE CONTEXT ================= -->
+<script>
+const PROFILE = {
+    state_id: "{{ profile_location.state_id or '' }}",
+    city_id:  "{{ profile_location.city_id or '' }}",
+    ward_id:  "{{ profile_location.ward_id or '' }}"
+};
+</script>
 
 <!-- ================= SCRIPT ================= -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-    const state = document.getElementById("state_filter");
-    const city = document.getElementById("city_filter");
-    const ward = document.getElementById("ward_filter");
-    const department = document.getElementById("department_filter");
+    const state  = document.getElementById("state_filter");
+    const city   = document.getElementById("city_filter");
+    const ward   = document.getElementById("ward_filter");
+    const dept   = document.getElementById("department_filter");
     const status = document.getElementById("status_filter");
     const search = document.getElementById("search_input");
-    const table = document.getElementById("issues_table");
+    const table  = document.getElementById("issues_table");
 
     function loadIssues() {
-        const params = new URLSearchParams();
+        const p = new URLSearchParams();
+        if (state?.value)  p.append("state_id", state.value);
+        if (city?.value)   p.append("city_id", city.value);
+        if (ward?.value)   p.append("ward_id", ward.value);
+        if (dept?.value)   p.append("department_id", dept.value);
+        if (status.value)  p.append("status", status.value);
+        if (search.value.trim()) p.append("search", search.value.trim());
 
-        if (state) params.append("state_id", state.value);
-        if (city) params.append("city_id", city.value);
-        if (ward) params.append("ward_id", ward.value);
-        if (department) params.append("department_id", department.value);
-
-        params.append("status", status.value);
-        params.append("search", search.value.trim());
-
-        fetch(`/dashboard/issues/filter?${params.toString()}`)
+        fetch(`/dashboard/issues/filter?${p.toString()}`)
             .then(r => r.json())
-            .then(data => {
+            .then(d => {
                 table.innerHTML = "";
-
-                if (!data.issues || data.issues.length === 0) {
-                    table.innerHTML =
-                        "<tr><td colspan='7'>No issues found.</td></tr>";
+                if (!d.issues?.length) {
+                    table.innerHTML = "<tr><td colspan='7'>No issues found.</td></tr>";
                     return;
                 }
-
-                data.issues.forEach(i => {
+                d.issues.forEach(i => {
                     table.innerHTML += `
-                        <tr>
-                            <td>${i.title}</td>
-                            <td>${i.status}</td>
-                            <td>${i.ward_name || '-'}</td>
-                            <td>${i.city_name || '-'}</td>
-                            <td>${i.state_name || '-'}</td>
-                            <td>${i.deadline || '-'}</td>
-                            <td><a href="/issues/${i.issue_id}">View</a></td>
-                        </tr>
-                    `;
+                    <tr>
+                        <td>${i.title}</td>
+                        <td>${i.status}</td>
+                        <td>${i.ward_name || '-'}</td>
+                        <td>${i.city_name || '-'}</td>
+                        <td>${i.state_name || '-'}</td>
+                        <td>${i.deadline || '-'}</td>
+                        <td><a href="/issues/${i.issue_id}">View</a></td>
+                    </tr>`;
                 });
             });
     }
 
-    if (state && city) {
-        state.addEventListener("change", () => {
-            city.innerHTML = "<option value=''>City</option>";
-            if (ward) ward.innerHTML = "<option value=''>Ward</option>";
-            if (department) department.innerHTML = "<option value=''>Department</option>";
+    function loadCities(stateId, selectedCity=null) {
+        if (!city) return;
+        city.innerHTML = "<option value=''>City</option>";
+        ward && (ward.innerHTML = "<option value=''>Ward</option>");
+        dept && (dept.innerHTML = "<option value=''>Department</option>");
 
-            if (!state.value) return loadIssues();
-
-            fetch(`/admin/get_cities?state_id=${state.value}`)
-                .then(r => r.json())
-                .then(d => {
-                    d.cities.forEach(c =>
-                        city.innerHTML += `<option value="${c.city_id}">${c.name}</option>`
-                    );
-                    loadIssues();
-                });
-        });
+        fetch(`/admin/get_cities?state_id=${stateId}`)
+            .then(r => r.json())
+            .then(d => {
+                d.cities.forEach(c =>
+                    city.innerHTML += `<option value="${c.city_id}">${c.name}</option>`
+                );
+                if (selectedCity) {
+                    city.value = selectedCity;
+                    loadWards(selectedCity, PROFILE.ward_id);
+                    loadDepartments(selectedCity);
+                }
+                loadIssues();
+            });
     }
 
-    if (city) {
-        city.addEventListener("change", () => {
-            if (ward) ward.innerHTML = "<option value=''>Ward</option>";
-            if (department) department.innerHTML = "<option value=''>Department</option>";
+    function loadWards(cityId, selectedWard=null) {
+        if (!ward) return;
+        ward.innerHTML = "<option value=''>Ward</option>";
 
-            if (!city.value) return loadIssues();
-
-            if (ward) {
-                fetch(`/admin/get_wards?city_id=${city.value}`)
-                    .then(r => r.json())
-                    .then(d => {
-                        d.wards.forEach(w =>
-                            ward.innerHTML += `<option value="${w.ward_id}">${w.name}</option>`
-                        );
-                    });
-            }
-
-            if (department) {
-                fetch(`/admin/get_departments?city_id=${city.value}`)
-                    .then(r => r.json())
-                    .then(d => {
-                        d.departments.forEach(dep =>
-                            department.innerHTML += `<option value="${dep.department_id}">${dep.name}</option>`
-                        );
-                    });
-            }
-
-            loadIssues();
-        });
+        fetch(`/admin/get_wards?city_id=${cityId}`)
+            .then(r => r.json())
+            .then(d => {
+                d.wards.forEach(w =>
+                    ward.innerHTML += `<option value="${w.ward_id}">${w.name}</option>`
+                );
+                if (selectedWard) ward.value = selectedWard;
+            });
     }
 
-    if (ward) ward.addEventListener("change", loadIssues);
-    if (department) department.addEventListener("change", loadIssues);
+    function loadDepartments(cityId) {
+        if (!dept) return;
+        dept.innerHTML = "<option value=''>Department</option>";
+
+        fetch(`/admin/get_departments?city_id=${cityId}`)
+            .then(r => r.json())
+            .then(d => {
+                d.departments.forEach(dep =>
+                    dept.innerHTML += `<option value="${dep.department_id}">${dep.name}</option>`
+                );
+            });
+    }
+
+    // ---------- INITIAL BOOTSTRAP ----------
+    if (state && PROFILE.state_id) {
+        state.value = PROFILE.state_id;
+        loadCities(PROFILE.state_id, PROFILE.city_id);
+    } else if (PROFILE.city_id) {
+        loadWards(PROFILE.city_id, PROFILE.ward_id);
+        loadDepartments(PROFILE.city_id);
+        loadIssues();
+    } else {
+        loadIssues();
+    }
+
+    // ---------- EVENTS ----------
+    state?.addEventListener("change", () => {
+        if (!state.value) return loadIssues();
+        loadCities(state.value);
+    });
+
+    city?.addEventListener("change", () => {
+        if (!city.value) return loadIssues();
+        loadWards(city.value);
+        loadDepartments(city.value);
+        loadIssues();
+    });
+
+    ward?.addEventListener("change", loadIssues);
+    dept?.addEventListener("change", loadIssues);
     status.addEventListener("change", loadIssues);
     search.addEventListener("input", loadIssues);
 });
 </script>
 
+<!-- ================= CHART ================= -->
 <script>
-const ctx = document.getElementById('issuesChart');
-
-new Chart(ctx, {
+new Chart(document.getElementById('issuesChart'), {
     type: 'bar',
     data: {
         labels: ['Reported','Assigned','In Progress','In Review','Resolved','Rejected'],

@@ -1,76 +1,72 @@
-# D.T.I---Project
-Public Issue Reporting &amp; Tracking System for inclusive, role-based civic governance
+# D.T.I — Public Issue Reporting & Tracking System
 
-# Public Issue Reporting & Tracking System
-
-> A role-based, inclusive civic issue management platform that combines digital tracking with assisted and offline reporting.
+> A structured, role-based civic governance platform for transparent public issue reporting, tracking, and resolution.
 
 ---
 
 ## 📌 Overview
 
 Cities and local communities face recurring public issues such as damaged roads, sanitation problems, water leakage, and safety hazards.  
-While these issues are common, reporting and resolution are often unstructured, opaque, and inaccessible to many citizens.
 
-This project aims to **digitize public issue reporting and tracking** while respecting real-world municipal hierarchies and supporting **offline, assisted, and non-technical users** through human facilitation.
+Reporting mechanisms are often fragmented, opaque, or inaccessible to non-technical citizens.
 
-The system is designed as a **collaborative, evolving platform**, developed incrementally by a team and refined over time.
+This project digitizes civic issue reporting while respecting real-world municipal hierarchies and enabling assisted and offline participation.
+
+The system is designed as a scalable governance tool — not just a complaint form.
 
 ---
 
-## 🎯 Key Objectives
+## 🎯 Objectives
 
-- Provide a structured platform for reporting and tracking public issues
-- Ensure transparency and accountability through status tracking and timelines
-- Support both online and offline (assisted) complaint submission
-- Enforce role-based and location-based access control
-- Reflect real municipal governance workflows
-- Build an extensible foundation for future enhancements
+- Provide structured issue reporting and tracking
+- Ensure transparency through status history and auditability
+- Support assisted and offline submissions
+- Enforce strict role-based access control
+- Reflect real municipal governance workflow
+- Maintain long-term extensibility and maintainability
 
 ---
 
 ## 👥 User Roles
 
-The system supports multiple roles aligned with real governance structures:
+The system models real governance layers:
 
-- **Citizen** – Reports and tracks own issues
-- **Community Facilitator** – Assists citizens with offline or verbal reporting
-- **Field Staff / Inspector** – Reports and verifies issues on the ground
-- **Department Admin** – Manages department-assigned issues
-- **Municipal Admin** – Assigns departments, sets deadlines, monitors progress
-- **State Admin** – Oversees municipalities within a state
-- **Super Admin** – System-wide oversight and monitoring
+- **Citizen** – Reports and tracks personal issues
+- **Facilitator** – Assists citizens in offline/verbal reporting
+- **Field Staff** – Reports and verifies issues on-site
+- **Department Admin** – Manages department-level issues
+- **Municipal Admin** – Assigns departments and deadlines
+- **State Admin** – Oversees municipalities
+- **Super Admin** – System-wide visibility and oversight
 
-Each role has **strict visibility and permission boundaries** enforced at the backend.
+Each role has enforced permission boundaries at the backend.
 
 ---
 
 ## 🔁 Issue Lifecycle
 
 1. Issue is reported (Citizen / Facilitator / Field Staff)
-2. Issue is reviewed by Municipal Admin
+2. Municipal Admin reviews submission
 3. Department is assigned with a deadline
-4. Issue progresses through status updates
-5. Resolution is verified and recorded
-6. Citizen can track the complete history
+4. Status progresses through controlled stages
+5. Resolution is recorded
+6. Citizen can track complete issue history
 
 No issue is deleted.  
 All actions are timestamped and traceable.
 
 ---
 
-## 🧩 Core Features (Current)
+## 🧩 Current Features
 
 - Mobile-based authentication with OTP verification
-- Role-based access control and route protection
-- Location hierarchy (State → City → Ward)
-- Assisted and offline issue reporting
-- Issue dashboard with filters and search
-- Status timeline with remarks and updates
+- Role-based and location-based access control
+- Hierarchical location model (State → City → Ward)
+- Assisted signup and assisted issue reporting
 - Image uploads for issue evidence
-- Admin dashboards for monitoring and assignment
-
-> ⚠️ Note: This project is under active development. Features and flows will continue to evolve.
+- Status history tracking
+- Dashboard filtering and search
+- Administrative monitoring interfaces
 
 ---
 
@@ -79,22 +75,21 @@ All actions are timestamped and traceable.
 - **Backend**: Python (Flask)
 - **Frontend**: HTML, CSS, Jinja2, JavaScript
 - **Database**: MySQL
-- **Authentication**: Session-based with OTP verification
+- **Authentication**: Session-based with OTP
 - **Version Control**: Git & GitHub
 
-
-The stack is intentionally simple, readable, and beginner-friendly while remaining scalable.
+The stack is intentionally simple, readable, and maintainable.
 
 ---
 
-## 📂 Project Structure (High Level)
+## 📂 Project Structure
 
-- `app.py` – Application entry point  
-- `routes/` – Flask blueprints and route logic  
-- `utils/` – Authentication and helper utilities  
-- `templates/` – HTML templates (Jinja2)  
-- `static/` – CSS, JavaScript, and uploaded files  
- 
+app.py # Application entry point
+routes/ # Flask blueprints and route logic
+templates/ # Jinja2 templates
+static/ # CSS, JS, uploads
+utils/ # Helpers and authentication utilities
+
 
 Sensitive configuration files (`config.py`, `.env`) are excluded from version control.
 
@@ -105,62 +100,59 @@ Sensitive configuration files (`config.py`, `.env`) are excluded from version co
 1. Clone the repository
 2. Create a virtual environment
 3. Install dependencies
-4. Create `config.py` using `config.example.py`
-5. Set up the database schema
-6. Run the Flask application
+4. Configure database in `config.py`
+5. Run database schema
+6. Start the Flask server
 
-> Detailed setup instructions will be expanded as the project stabilizes.
+Detailed setup instructions may expand as the system stabilizes.
 
 ---
 
-## 🤝 Team Collaboration
+## 🤝 Collaboration Model
 
-This is a **team project**.
+- `main` is protected
+- All changes happen via feature branches
+- Every update requires a Pull Request
+- Code review is mandatory
+- Stability over speed
 
-- Development happens collaboratively via GitHub
-- Features are added incrementally
-- README and documentation will be updated as the system matures
-- Code reviews and refactoring are expected parts of the workflow
-
-We prioritize **clarity, correctness, and maintainability** over rushed features.
+See `CONTRIBUTING.md` for full workflow.
 
 ---
 
 ## 🔮 Planned Enhancements
 
-- Password hashing and enhanced security controls
-- OTP resend limits and rate limiting
-- Audit logs and activity tracking
-- Notifications (SMS / Email)
-- Advanced analytics and reports
-- Accessibility and usability improvements
-- Performance optimization and pagination
+- Password hashing and improved security
+- OTP rate limiting
+- Notification system (SMS/Email)
+- Audit logs
+- Analytics dashboard
+- Performance optimization
+- Accessibility improvements
 
-These will be implemented progressively.
+Enhancements will be incremental and controlled.
 
 ---
 
-## 🧭 Philosophy
+## 🏛 Project Philosophy
 
-This project is not just a web application.
+This is not just a web application.
 
 It is an attempt to:
-- Respect existing governance structures
-- Include citizens who are offline or non-technical
-- Encourage accountability through visibility
-- Build software that reflects real-world constraints
 
-We are not trying to build something flashy.  
-We are trying to build something **right**.
+- Respect governance structures
+- Include offline and non-technical citizens
+- Encourage accountability through visibility
+- Build software aligned with real-world workflows
+
+We are not building something flashy.  
+We are building something correct.
 
 ---
 
 ## 📌 Status
 
-🟡 **In Active Development**
+🟡 Active Development
 
 The system is functional but evolving.  
-Expect regular changes, improvements, and refinements.
-
----
-
+Expect refinement, iteration, and structural improvement.

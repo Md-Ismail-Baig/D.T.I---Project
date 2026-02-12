@@ -27,11 +27,10 @@ def create_issue():
     cursor = conn.cursor(dictionary=True)
 
     if request.method == "POST":
-        # Read form data
         title = request.form.get("title", "").strip()
         description = request.form.get("description", "").strip()
         category = request.form.get("category")
-        deadline = request.form.get("deadline") or None
+
         assisted = role == "facilitator"
         source = role
 
@@ -39,45 +38,55 @@ def create_issue():
             flash("All required fields must be filled.", "danger")
             return redirect(url_for("issues.create_issue"))
 
-        # Get user location
-        cursor.execute("SELECT state_id, city_id, ward_id FROM Users WHERE user_id=%s", (user_id,))
+        # Fetch user location
+        cursor.execute(
+            "SELECT state_id, city_id, ward_id FROM Users WHERE user_id=%s",
+            (user_id,)
+        )
         location = cursor.fetchone()
-        if not location or not all([location["state_id"], location["city_id"], location["ward_id"]]):
+
+        if not location or not all([
+            location["state_id"],
+            location["city_id"],
+            location["ward_id"]
+        ]):
             flash("Your location details are incomplete. Please update your profile.", "danger")
             cursor.close()
             conn.close()
             return redirect(url_for("profile.profile_page"))
 
-        # Insert new issue
+        # Insert issue (NO DEADLINE HERE)
         cursor.execute("""
             INSERT INTO Issues (
                 title, description, category,
                 state_id, city_id, ward_id,
                 reported_by, source, assisted,
-                current_status, deadline
+                current_status
             )
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         """, (
             title, description, category,
             location["state_id"], location["city_id"], location["ward_id"],
             user_id, source, assisted,
-            "Reported", deadline
+            "Reported"
         ))
+
         issue_id = cursor.lastrowid
 
-        # Insert initial status
+        # Initial status entry
         cursor.execute("""
             INSERT INTO Status_Updates (issue_id, status, remarks, updated_by)
             VALUES (%s,%s,%s,%s)
         """, (issue_id, "Reported", "Issue reported", user_id))
 
-        # Handle image uploads
+        # Image uploads
         images = request.files.getlist("images")
         for img in images:
             if img and img.filename:
                 filename = secure_filename(img.filename)
                 filepath = os.path.join(UPLOAD_FOLDER, filename)
                 img.save(filepath)
+
                 cursor.execute("""
                     INSERT INTO Issue_Images (issue_id, image_file, uploaded_by)
                     VALUES (%s,%s,%s)
@@ -86,12 +95,14 @@ def create_issue():
         conn.commit()
         cursor.close()
         conn.close()
+
         flash("Issue reported successfully!", "success")
         return redirect(url_for("dashboard.dashboard"))
 
     cursor.close()
     conn.close()
     return render_template("issue_create.html")
+
 
 
 # -----------------------------
@@ -194,13 +205,13 @@ def assign_issue(issue_id):
         remarks = request.form.get("remarks")
 
         cursor.execute("""
-            UPDATE Issues SET assigned_department=%s, deadline=%s, current_status='In Progress'
+            UPDATE Issues SET assigned_department=%s, deadline=%s, current_status='Assigned'
             WHERE issue_id=%s
         """, (department_id, deadline, issue_id))
 
         cursor.execute("""
             INSERT INTO Status_Updates (issue_id, status, remarks, updated_by)
-            VALUES (%s,'In Progress',%s,%s)
+            VALUES (%s,'Assigned',%s,%s)
         """, (issue_id, remarks, session["user_id"]))
 
         conn.commit()

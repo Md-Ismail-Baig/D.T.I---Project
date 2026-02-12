@@ -11,7 +11,11 @@
     <!-- Header -->
     <header>
         <div class="container header-container">
-            <h1><a href="{{ url_for('dashboard.dashboard') }}" class="logo">Civic Issue Management</a></h1>
+            <h1>
+                <a href="{{ url_for('main.home') }}" class="logo">
+                    Civic Issue Management
+                </a>
+            </h1>
             <nav>
                 {% if session.get('user_id') %}
                     <a href="{{ url_for('profile.profile_page') }}">Profile</a>

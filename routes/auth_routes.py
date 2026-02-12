@@ -1,4 +1,5 @@
 # routes/auth_routes.py
+
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from utils.db import get_db_connection
 from utils.auth import login_required
@@ -7,15 +8,15 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 
 # ---------------------------------
-# DEFAULT ENTRY (OPEN SIGNUP FIRST)
+# ENTRY
 # ---------------------------------
 @auth_bp.route("/")
 def entry():
-    return redirect(url_for("auth.signup"))
+    return redirect(url_for("auth.login"))
 
 
 # ---------------------------------
-# SIGNUP (Citizen / Assisted)
+# SIGNUP
 # ---------------------------------
 @auth_bp.route("/signup", methods=["GET", "POST"])
 def signup():
@@ -28,18 +29,20 @@ def signup():
         ward_id = request.form.get("ward_id")
         assisted = request.form.get("assisted_signup") == "on"
 
+        if not all([name, mobile, password]):
+            flash("All required fields must be filled.", "danger")
+            return redirect(url_for("auth.signup"))
+
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
 
-        # Check if mobile already exists
         cursor.execute("SELECT user_id FROM Users WHERE mobile=%s", (mobile,))
         if cursor.fetchone():
-            flash("Mobile number already registered. Please login.", "warning")
             cursor.close()
             conn.close()
+            flash("Mobile already registered. Please login.", "warning")
             return redirect(url_for("auth.login"))
 
-        # Create unverified citizen
         cursor.execute("""
             INSERT INTO Users
             (name, mobile, password, role, state_id, city_id, ward_id, verified, assisted_signup)
@@ -50,9 +53,11 @@ def signup():
         cursor.close()
         conn.close()
 
-        # Store mobile for OTP flow
+        # OTP intent
         session["otp_mobile"] = mobile
-        flash("Signup successful! Please verify your mobile number.", "success")
+        session["otp_purpose"] = "signup"
+
+        flash("Signup successful. Verify your mobile number.", "success")
         return redirect(url_for("otp_bp.request_otp"))
 
     return render_template("otp/signup.html")
@@ -64,42 +69,40 @@ def signup():
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        session.pop("user_id", None)
-        session.pop("role", None)
+        return render_template("login.html")
 
-    if request.method == "POST":
-        mobile = request.form.get("mobile")
-        password = request.form.get("password")
+    mobile = request.form.get("mobile")
+    password = request.form.get("password")
 
-        conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
 
-        cursor.execute("""
-            SELECT user_id, role, verified
-            FROM Users
-            WHERE mobile=%s AND password=%s
-        """, (mobile, password))
+    cursor.execute("""
+        SELECT user_id, role, verified
+        FROM Users
+        WHERE mobile=%s AND password=%s
+    """, (mobile, password))
 
-        user = cursor.fetchone()
-        cursor.close()
-        conn.close()
+    user = cursor.fetchone()
+    cursor.close()
+    conn.close()
 
-        if not user:
-            flash("Invalid mobile number or password.", "danger")
-            return redirect(url_for("auth.login"))
+    if not user:
+        flash("Invalid mobile number or password.", "danger")
+        return redirect(url_for("auth.login"))
 
-        if not user["verified"]:
-            session["otp_mobile"] = mobile
-            flash("Please verify your mobile number first.", "warning")
-            return redirect(url_for("otp_bp.request_otp"))
+    if not user["verified"]:
+        flash("Account not verified. Please complete signup.", "warning")
+        return redirect(url_for("auth.login"))
 
-        session["user_id"] = user["user_id"]
-        session["role"] = user["role"]
+    # ✅ Clean login
+    session.clear()
+    session["user_id"] = user["user_id"]
+    session["role"] = user["role"]
 
-        flash("Login successful!", "success")
-        return redirect(url_for("dashboard.dashboard"))
+    flash("Login successful.", "success")
+    return redirect(url_for("dashboard.dashboard"))
 
-    return render_template("login.html")
 
 
 # ---------------------------------
@@ -118,53 +121,63 @@ def logout():
 # ---------------------------------
 @auth_bp.route("/forgot_password")
 def forgot_password():
+    session.clear()
     session["otp_purpose"] = "reset_password"
     return redirect(url_for("otp_bp.request_otp"))
 
-@auth_bp.route("/profile/change_password", methods=["GET", "POST"])
+
+# ---------------------------------
+# PROFILE PASSWORD RESET (LOGGED IN)
+# ---------------------------------
+@auth_bp.route("/profile/reset_password", methods=["GET", "POST"])
 @login_required
-def profile_change_password():
-    if "user_id" not in session:
-        return redirect(url_for("auth.login"))
+def profile_reset_password():
+    user_id = session["user_id"]
 
     if request.method == "POST":
         current_password = request.form.get("current_password")
         new_password = request.form.get("new_password")
         confirm_password = request.form.get("confirm_password")
 
-        if not current_password or not new_password or not confirm_password:
+        if not all([current_password, new_password, confirm_password]):
             flash("All fields are required.", "danger")
-            return redirect(url_for("auth.profile_change_password"))
+            return redirect(url_for("auth.profile_reset_password"))
 
         if new_password != confirm_password:
             flash("Passwords do not match.", "danger")
-            return redirect(url_for("auth.profile_change_password"))
+            return redirect(url_for("auth.profile_reset_password"))
 
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
 
         cursor.execute(
             "SELECT password FROM Users WHERE user_id=%s",
-            (session["user_id"],)
+            (user_id,)
         )
         user = cursor.fetchone()
 
         if not user or user["password"] != current_password:
-            flash("Current password is incorrect.", "danger")
             cursor.close()
             conn.close()
-            return redirect(url_for("auth.profile_change_password"))
+            flash("Current password is incorrect.", "danger")
+            return redirect(url_for("auth.profile_reset_password"))
+
+        if new_password == current_password:
+            cursor.close()
+            conn.close()
+            flash("New password must be different.", "danger")
+            return redirect(url_for("auth.profile_reset_password"))
 
         cursor.execute(
             "UPDATE Users SET password=%s WHERE user_id=%s",
-            (new_password, session["user_id"])
+            (new_password, user_id)
         )
+
         conn.commit()
         cursor.close()
         conn.close()
 
-        # 🚫 DO NOT CLEAR SESSION HERE
         flash("Password updated successfully.", "success")
         return redirect(url_for("dashboard.dashboard"))
 
-    return render_template("profile/change_password.html")
+    return render_template("profile/reset_password.html")

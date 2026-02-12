@@ -9,6 +9,7 @@ from routes.dashboard_routes import dashboard_bp
 from routes.issue_routes import issue_bp
 from routes.profile_routes import profile_bp
 from routes.admin_routes import admin_bp
+from routes.main_routes import main_bp
 
 
 def create_app():
@@ -16,12 +17,14 @@ def create_app():
     app.config.from_object(Config)
 
     # Register Blueprints
+    app.register_blueprint(main_bp)
     app.register_blueprint(otp_bp, url_prefix="/otp")
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(dashboard_bp, url_prefix="/dashboard")
     app.register_blueprint(issue_bp, url_prefix="/issues")
     app.register_blueprint(profile_bp, url_prefix="/profile")
     app.register_blueprint(admin_bp, url_prefix="/admin")
+
 
     # --------------------
     # Error Handlers

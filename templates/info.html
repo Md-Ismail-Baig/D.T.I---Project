@@ -1,0 +1,535 @@
+{% extends "base.html" %}
+
+{% block title %}About Public Issue System{% endblock %}
+
+{% block content %}
+<div class="info-page">
+
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <h2>Public Issue Reporting & Tracking System</h2>
+        <p>
+            A centralized platform enabling citizens and authorities to ensure
+            transparency, accountability, and timely resolution of civic issues.
+        </p>
+
+        <p class="hero-highlight">
+            Report. Track. Resolve.
+        </p>
+        <p class="hero-note">
+            Use the navigation menu above to Register, Login, or access your Dashboard.
+        </p>
+
+    </section>
+
+
+    <!-- LIVE STATISTICS -->
+    <section class="stats-section">
+    <h3>System Performance Overview</h3>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h4>Total Issues Reported</h4>
+            <p>{{ total_issues }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h4>Resolved Issues</h4>
+            <p>{{ resolved_issues }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h4>In Progress</h4>
+            <p>{{ in_progress_issues }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h4>Pending</h4>
+            <p>{{ pending_issues }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h4>Resolution Rate</h4>
+            <p>{{ resolution_rate }}%</p>
+        </div>
+
+        <div class="stat-card">
+            <h4>Active Cases</h4>
+            <p>{{ active_rate }}%</p>
+        </div>
+    </div>
+</section>
+
+<section class="impact-section">
+    <h3>Our Impact</h3>
+    <p>
+        The Civic Issue Management System has achieved a 
+        <strong>{{ resolution_rate }}% resolution rate</strong>, 
+        demonstrating improved transparency, faster response time, 
+        and better coordination between departments and citizens.
+    </p>
+</section>
+
+
+    <!-- WORKFLOW SECTION -->
+    <section class="workflow-section">
+        <h3>How the System Works</h3>
+        <div class="workflow-steps">
+            <div>1️⃣ Report Issue</div>
+            <div>➡</div>
+            <div>2️⃣ Assigned to Department</div>
+            <div>➡</div>
+            <div>3️⃣ In Progress</div>
+            <div>➡</div>
+            <div>4️⃣ Field Verification</div>
+            <div>➡</div>
+            <div>5️⃣ Resolved</div>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section>
+        <h3>Why This System Exists</h3>
+        <p>
+            Public infrastructure issues such as damaged roads, sanitation problems,
+            water leakage, and non-functional streetlights affect daily life.
+            This system ensures structured tracking, accountability, and transparent resolution.
+        </p>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section class="faq-section">
+        <h3>Frequently Asked Questions</h3>
+
+        <details>
+            <summary>How do I report an issue?</summary>
+            <p>Register or login, then submit your complaint from your dashboard.</p>
+        </details>
+
+        <details>
+            <summary>Can I report issues offline?</summary>
+            <p>Yes. Community Facilitators can submit complaints on your behalf.</p>
+        </details>
+
+        <details>
+            <summary>How long does resolution take?</summary>
+            <p>Resolution time depends on urgency and department workload. Deadlines are monitored.</p>
+        </details>
+
+        <details>
+            <summary>Is this service free?</summary>
+            <p>Yes. This service is completely free for all citizens.</p>
+        </details>
+
+        <details>
+            <summary>Is my personal data safe?</summary>
+            <p>No sensitive personal identification documents are stored in the system.</p>
+        </details>
+    </section>
+
+    <!-- DISCLAIMER -->
+    <section class="disclaimer-section">
+        <h3>Important Notice</h3>
+        <p>
+            This platform is strictly for reporting public civic issues.
+            Submission of false or misleading complaints may result in account restriction.
+        </p>
+        <p>
+            For life-threatening emergencies, please contact official emergency services immediately.
+        </p>
+    </section>
+
+    <!-- VOICE ASSISTANT -->
+    <section class="voice-assistant-section">
+        <h3>Voice Assistant</h3>
+        <p>Click below and ask your question about the system.</p>
+
+        <div class="voice-assistant">
+            <button id="startBtn" class="btn-primary">🎤 Speak</button>
+            <p><strong>You said:</strong> <span id="userText">...</span></p>
+            <p><strong>Assistant:</strong> <span id="assistantText">...</span></p>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section>
+        <h3>Contact & Support</h3>
+        <p>Helpline: +91-XXXXXXXXXX</p>
+        <p>Email: support@example.com</p>
+        <p>For assistance, contact your local ward office.</p>
+    </section>
+
+</div>
+
+<script>
+    const startBtn = document.getElementById("startBtn");
+    const userText = document.getElementById("userText");
+    const assistantText = document.getElementById("assistantText");
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+        alert("Voice recognition is not supported in this browser. Please use Google Chrome.");
+    } else {
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        let isListening = false;
+
+        const faq = [
+
+/* =========================
+   REGISTRATION & LOGIN
+========================= */
+
+{ q: /how do i register|how to register|where to register|create account|sign up|open account/i,
+  a: "You can register using your mobile number and OTP. If you need help, a Community Facilitator can register you." },
+
+{ q: /why otp|what is otp|verification code|code not working/i,
+  a: "OTP is a one-time verification code used to confirm your identity. It expires quickly for security." },
+
+{ q: /i forgot password|reset password|change password/i,
+  a: "You can reset your password using OTP. If you face difficulty, contact your facilitator." },
+
+{ q: /cannot login|login not working|unable to sign in/i,
+  a: "Please check your mobile number and password. Make sure your account is verified with OTP." },
+
+{ q: /can anyone register|who can register|eligibility/i,
+  a: "Any citizen aged 18 or above can self-register. Others can register through a facilitator." },
+
+{ q: /i am old|senior citizen|i don't know how to use mobile/i,
+  a: "Senior citizens can report issues through a Community Facilitator at the ward office." },
+
+/* =========================
+   REPORTING ISSUES
+========================= */
+
+{ q: /how to complain|how to report|file complaint|report problem/i,
+  a: "You can report issues online from your dashboard or ask a facilitator to submit it for you." },
+
+{ q: /road broken|pothole|bad road|damaged road/i,
+  a: "Road-related issues are handled by the Public Works Department. Please report it through the system." },
+
+{ q: /garbage not collected|trash problem|dirty area|waste not picked/i,
+  a: "Garbage and sanitation issues are handled by the Sanitation Department." },
+
+{ q: /water leakage|pipe broken|water problem|no water supply/i,
+  a: "Water-related problems are handled by the Water Department. Please report with location details." },
+
+{ q: /street light not working|light problem|dark street/i,
+  a: "Streetlight issues are handled by the Electricity Department." },
+
+{ q: /drain blocked|sewer problem|drainage issue/i,
+  a: "Drainage and sewer issues are handled by the Sanitation Department." },
+
+{ q: /tree fallen|tree problem/i,
+  a: "Fallen trees or obstruction issues are handled by the Municipal Maintenance Department." },
+
+{ q: /dangerous place|open wire|electric shock/i,
+  a: "Electrical hazards are treated as urgent. Please report immediately for priority handling." },
+
+{ q: /can i upload photo|add image|attach picture/i,
+  a: "Yes, you can upload photos while submitting your complaint." },
+
+{ q: /can i speak complaint|voice complaint|talk instead of typing/i,
+  a: "Yes, you can speak your complaint. It will be converted to text and submitted." },
+
+{ q: /no internet|offline complaint/i,
+  a: "If you do not have internet access, a Community Facilitator can submit the complaint for you." },
+
+/* =========================
+   AFTER REPORTING
+========================= */
+
+{ q: /what happens after|after reporting|after submitting/i,
+  a: "Your complaint is assigned to the correct department and tracked until resolved." },
+
+{ q: /how to check status|track complaint|see progress/i,
+  a: "You can track the complaint status from your dashboard." },
+
+{ q: /why still pending|not resolved yet|too much delay/i,
+  a: "Municipal admins set deadlines. If delayed, the system flags it for review." },
+
+{ q: /how long will it take|when will it be fixed/i,
+  a: "Resolution time depends on urgency and department workload. Critical issues are prioritized." },
+
+{ q: /who is handling my complaint|which department/i,
+  a: "The system automatically assigns your complaint to the relevant department." },
+
+{ q: /can i cancel complaint|delete complaint/i,
+  a: "Complaints cannot be deleted, but you may contact your ward office for updates." },
+
+/* =========================
+   ROLES & SYSTEM
+========================= */
+
+{ q: /what is super admin|head of system/i,
+  a: "Super Admin oversees the entire system including all states and cities." },
+
+{ q: /what is state admin/i,
+  a: "State Admin monitors all municipalities within a state." },
+
+{ q: /what is municipal admin|city admin/i,
+  a: "Municipal Admin manages city-level complaints and assigns departments." },
+
+{ q: /what is department admin/i,
+  a: "Department Admin handles complaints assigned to their department." },
+
+{ q: /what is field staff/i,
+  a: "Field staff verify issues on the ground and update resolution status." },
+
+{ q: /what is facilitator|who helps offline/i,
+  a: "Community Facilitators help citizens who cannot use the system online." },
+
+/* =========================
+   SECURITY & PRIVACY
+========================= */
+
+{ q: /is my data safe|privacy|personal information/i,
+  a: "Your personal data is protected. No sensitive documents like Aadhaar are stored." },
+
+{ q: /fake complaint|false complaint/i,
+  a: "All complaints are verified. Repeated misuse can result in account restriction." },
+
+{ q: /is this free|any charges/i,
+  a: "This service is completely free for all citizens." },
+
+/* =========================
+   HELPLINE & CONTACT
+========================= */
+
+{ q: /helpline|phone number|call someone/i,
+  a: "You can call +91-XXXXXXXXXX for assistance." },
+
+{ q: /contact ward office|email support/i,
+  a: "You can contact your local ward office or email support@example.com." },
+
+/* =========================
+   GENERAL HUMAN QUESTIONS
+========================= */
+
+{ q: /why should i use this|what is benefit/i,
+  a: "This system ensures transparency, accountability, and faster resolution of public issues." },
+
+{ q: /does government see complaint/i,
+  a: "Yes, authorized officials can see and track complaints for action." },
+
+{ q: /thank you|thanks/i,
+  a: "You're welcome! I'm here to help you." },
+
+{ q: /who are you|what is your name/i,
+  a: "I am CivicBot, your assistant for reporting and tracking public issues." },
+
+/* =========================
+   EMOTIONAL / FRUSTRATED USERS
+========================= */
+
+{ q: /nobody is listening|no one cares|no response/i,
+  a: "Your complaint is recorded in the system and visible to officials. Please track it from your dashboard." },
+
+{ q: /why government not working|why not fixing/i,
+  a: "The system ensures accountability. Once reported, departments are assigned and deadlines are set." },
+
+{ q: /i already complained|i reported before/i,
+  a: "You can check the status of your previous complaint from your dashboard." },
+
+{ q: /still same problem|not fixed yet|problem continues/i,
+  a: "If the issue is not resolved properly, you can update or escalate through your dashboard." },
+
+{ q: /very urgent|emergency situation/i,
+  a: "Urgent issues are prioritized automatically. Please provide clear location details when reporting." },
+
+/* =========================
+   LOCATION CONFUSION
+========================= */
+
+{ q: /wrong ward selected|selected wrong city/i,
+  a: "Please contact your ward office or municipal admin to correct your location details." },
+
+{ q: /how to change city|change ward/i,
+  a: "Location changes can be updated through profile settings or by contacting support." },
+
+{ q: /complaint in another area|other city issue/i,
+  a: "You can only report issues within your registered city or ward." },
+
+/* =========================
+   MULTIPLE ISSUES
+========================= */
+
+{ q: /many problems|multiple complaints/i,
+  a: "Please submit separate complaints for each issue for faster resolution." },
+
+{ q: /can i report for my neighbor|someone else's problem/i,
+  a: "Yes, you may report public issues affecting your area." },
+
+/* =========================
+   TECHNICAL DOUBTS
+========================= */
+
+{ q: /website not opening|site not working/i,
+  a: "Please check your internet connection or contact the helpline for assistance." },
+
+{ q: /page stuck|button not working/i,
+  a: "Try refreshing the page. If the issue continues, contact support." },
+
+{ q: /can i use mobile|works on phone/i,
+  a: "Yes, the system works on both mobile phones and computers." },
+
+{ q: /app available|mobile app/i,
+  a: "Currently this system is web-based. A mobile app may be available in the future." },
+
+/* =========================
+   ISSUE DETAILS
+========================= */
+
+{ q: /what details needed|what information required/i,
+  a: "You need to provide issue type, description, and location. Adding a photo helps faster action." },
+
+{ q: /exact location|how to give location/i,
+  a: "Select your ward and provide a clear description of the area or landmark." },
+
+{ q: /anonymous complaint|hide my name/i,
+  a: "For accountability, complaints are linked to verified users." },
+
+/* =========================
+   STATUS & ESCALATION
+========================= */
+
+{ q: /who checks complaint|who verifies/i,
+  a: "Field staff verify issues physically and update the system." },
+
+{ q: /can i escalate|complain about delay/i,
+  a: "If delayed beyond deadline, the system flags the issue for higher authority review." },
+
+{ q: /complaint closed but not fixed/i,
+  a: "If not properly resolved, you may contact your ward office for further action." },
+
+/* =========================
+   ACCESSIBILITY & INCLUSION
+========================= */
+
+{ q: /i cannot read english|language problem/i,
+  a: "Community Facilitators can assist citizens in local languages." },
+
+{ q: /visually impaired|cannot see properly/i,
+  a: "Voice assistance and facilitators are available to help you." },
+
+{ q: /physically disabled|wheelchair access issue/i,
+  a: "Accessibility issues can be reported and are handled by the appropriate department." },
+
+/* =========================
+   FIELD STAFF QUESTIONS
+========================= */
+
+{ q: /how do staff update|how to verify issue/i,
+  a: "Field staff log into the system and update status after on-site inspection." },
+
+{ q: /can staff create complaint/i,
+  a: "Yes, field staff can report issues proactively during inspection." },
+
+/* =========================
+   DEPARTMENT RELATED
+========================= */
+
+{ q: /which department for road/i,
+  a: "Road issues are handled by the Public Works Department." },
+
+{ q: /which department for garbage/i,
+  a: "Garbage issues are handled by the Sanitation Department." },
+
+{ q: /which department for water/i,
+  a: "Water issues are handled by the Water Department." },
+
+{ q: /which department for lights/i,
+  a: "Streetlight issues are handled by the Electricity Department." },
+
+/* =========================
+   ACCOUNT MANAGEMENT
+========================= */
+
+{ q: /how to update profile|edit profile/i,
+  a: "You can update your profile information from your dashboard settings." },
+
+{ q: /change mobile number/i,
+  a: "Please contact support to update your registered mobile number." },
+
+{ q: /delete account/i,
+  a: "For account-related requests, please contact your ward office or support." },
+
+/* =========================
+   TRUST & TRANSPARENCY
+========================= */
+
+{ q: /is this government website|official system/i,
+  a: "Yes, this system is designed for official public issue reporting and tracking." },
+
+{ q: /can officials see my complaint/i,
+  a: "Yes, authorized officials can view and process complaints for resolution." },
+
+{ q: /is complaint public/i,
+  a: "Complaint details are visible to relevant authorities for resolution." },
+
+/* =========================
+   RANDOM NORMAL QUESTIONS
+========================= */
+
+{ q: /good morning|hello|hi/i,
+  a: "Hello! How can I assist you with public issue reporting today?" },
+
+{ q: /okay|alright/i,
+  a: "Let me know if you need help with reporting or tracking an issue." },
+
+{ q: /thank you very much/i,
+  a: "You're most welcome. I'm here to help anytime." },
+
+/* =========================
+   FALLBACK
+========================= */
+
+{ q: /.*/,
+  a: "Sorry, I can only answer questions related to the Public Issue Reporting and Tracking System." }
+
+];
+
+
+        startBtn.addEventListener("click", () => {
+            if (!isListening) {
+                recognition.start();
+                startBtn.textContent = "🎤 Listening...";
+                isListening = true;
+            }
+        });
+
+        recognition.addEventListener("result", (event) => {
+            const transcript = event.results[0][0].transcript.toLowerCase();
+            userText.textContent = transcript;
+
+            let answer = faq.find(item => item.q.test(transcript))?.a 
+                         || "Sorry, I only answer system-related questions.";
+
+            assistantText.textContent = answer;
+
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel(); // stop previous speech
+                const utterance = new SpeechSynthesisUtterance(answer);
+                utterance.lang = 'en-US';
+                speechSynthesis.speak(utterance);
+            }
+        });
+
+        recognition.addEventListener("end", () => {
+            startBtn.textContent = "🎤 Speak";
+            isListening = false;
+        });
+
+        recognition.addEventListener("error", (e) => {
+            alert("Voice recognition error: " + e.error);
+            startBtn.textContent = "🎤 Speak";
+            isListening = false;
+        });
+    }
+</script>
+
+{% endblock %}
