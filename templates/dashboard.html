@@ -376,19 +376,24 @@ if (ctx) {
 
                             if (issue.reported_by == "{{ session['user_id'] }}") {
                                 supportButton = `
-                                    <button disabled title="You cannot support your own issue">
+                                    <button disabled
+                                        class="btn btn-secondary"
+                                        title="You cannot support your own issue">
                                         Support
                                     </button>`;
                             }
                             else if (["Resolved","Rejected"].includes(issue.status)) {
                                 supportButton = `
-                                    <button disabled title="This issue is closed for support">
+                                    <button disabled
+                                        class="btn btn-secondary"
+                                        title="This issue is closed for support">
                                         Support
                                     </button>`;
                             }
                             else {
                                 supportButton = `
                                     <button type="button"
+                                        class="btn btn-primary"
                                         onclick="supportIssue(${issue.issue_id})">
                                         Support
                                     </button>`;
